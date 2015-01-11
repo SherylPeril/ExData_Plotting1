@@ -1,3 +1,5 @@
+## Download the data
+
 if (!file.exists(rawdata.zip)) {
 fileUrl <- "https://d396qusza40orc.cloudfront.net/exdata%2Fdata%2Fhousehold_power_consumption.zip"
 download.file(fileUrl, destfile = "rawdata.zip", method = "curl")
@@ -13,22 +15,28 @@ download.file(fileUrl, destfile = "rawdata.zip", method = "curl")
         print(md5sum(rawdata.zip))
         sink()
         }
+        
+## Unzip the data
+        
 unzip("rawdata.zip")
+
+## Read the data
 
 power.data <- file.path("household_power_consumption.txt")
 
 PowerData <- read.table(power.data, header = TRUE, sep = ";", na.strings = "?")
 
+## Create a subset of the date period needed
+
 PowerData <- subset(PowerData,Date == "1/2/2007" | Date == "2/2/2007")
+
+## Combine date and time to create a DateTime variable for plotting
 
 PowerData$DateTime <- strptime(paste(PowerData$Date, PowerData$Time, sep=" "), format="%d/%m/%Y %H:%M:%S")
 
-PowerData$Global_active_power <- as.character(PowerData$Global_active_power)
-
-PowerData$Global_active_power <- as.numeric(PowerData$Global_active_power)
+## Create plot
 
 png(filename = "plot3.png")
-
 
 plot(PowerData$DateTime, PowerData$Sub_metering_1, type = "l", bg = "white", ylab = "Energy sub metering", xlab = "")
 
